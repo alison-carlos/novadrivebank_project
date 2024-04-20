@@ -4,7 +4,6 @@ import psycopg2
 from fuzzywuzzy import process
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 import joblib
-#import const
 
 
 def fetch_data_from_db(sql_query):
@@ -73,4 +72,22 @@ def fn_save_encoders(df, column_names):
         label_encoder = LabelEncoder()
         df[column_name] = label_encoder.fit_transform(df[column_name])
         joblib.dump(label_encoder, f'./objects/label_encoder_{column_name}.joblib')
+    return df
+
+
+def fn_load_scalers(df, column_names):
+    for column_name in column_names:
+        file_name_scaler = f'./objects/scaler_{column_name}.joblib'
+        scaler = joblib.load(file_name_scaler)
+        df[column_name] = scaler.transform(df[[column_name]])
+
+    return df
+
+
+def fn_load_encoders(df, column_names):
+    for column_name in column_names:
+        file_name_encoder = f'./objects/label_encoder_{column_name}.joblib'
+        label_encoder = joblib.load(file_name_encoder)
+        df[column_name] = label_encoder.transform(df[[column_name]])
+
     return df
